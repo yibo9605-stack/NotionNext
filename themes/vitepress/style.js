@@ -96,6 +96,15 @@ const Style = () => (
       font-family: var(--vp-serif);
     }
 
+    #theme-vitepress .vp-brand-emoji {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+      line-height: 1;
+    }
+
     #theme-vitepress .vp-search-trigger {
       height: 40px;
       min-width: 148px;
@@ -153,6 +162,9 @@ const Style = () => (
       white-space: nowrap;
     }
     #theme-vitepress .vp-nav-item > a:hover {
+      color: var(--vp-primary);
+    }
+    #theme-vitepress .vp-nav-item > a.vp-nav-active {
       color: var(--vp-primary);
     }
     #theme-vitepress .vp-nav-chevron {
@@ -236,6 +248,237 @@ const Style = () => (
       width: 100%;
       min-height: calc(100vh - 180px);
       padding: 64px 28px 80px;
+    }
+
+    #theme-vitepress .vp-home-hero {
+      width: min(1160px, 100%);
+      min-height: calc(100vh - 270px);
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
+      align-items: start;
+      gap: 34px;
+      margin: 0 auto;
+      padding: 14px 20px 70px;
+    }
+    #theme-vitepress .vp-home-copy {
+      position: relative;
+      z-index: 2;
+      padding-top: 18px;
+    }
+    #theme-vitepress .vp-home-brand {
+      width: fit-content;
+      margin-bottom: 18px;
+      background: linear-gradient(100deg, #3451b2 12%, #8b5cf6 58%, #d946ef);
+      background-clip: text;
+      color: transparent;
+      font-size: clamp(30px, 4vw, 54px);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+    }
+    #theme-vitepress .vp-home-copy h1 {
+      max-width: 670px;
+      margin: 0;
+      font-size: clamp(46px, 6.2vw, 82px);
+      font-weight: 800;
+      letter-spacing: -0.055em;
+      line-height: 1.03;
+    }
+    #theme-vitepress .vp-home-copy p {
+      max-width: 620px;
+      margin: 28px 0 0;
+      color: var(--vp-muted);
+      font-size: clamp(18px, 2vw, 24px);
+      line-height: 1.65;
+    }
+    #theme-vitepress .vp-home-actions {
+      display: flex;
+      gap: 14px;
+      margin-top: 34px;
+    }
+    #theme-vitepress .vp-home-actions a {
+      min-width: 104px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 22px;
+      border: 1px solid var(--vp-border);
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease;
+    }
+    #theme-vitepress .vp-home-actions a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(52, 81, 178, 0.16);
+    }
+    #theme-vitepress .vp-home-primary {
+      color: white;
+      border-color: var(--vp-primary) !important;
+      background: var(--vp-primary);
+    }
+    #theme-vitepress .vp-home-secondary {
+      background: var(--vp-surface);
+    }
+    #theme-vitepress .vp-home-art {
+      position: relative;
+      min-height: 500px;
+      display: grid;
+      place-items: center;
+      isolation: isolate;
+    }
+    #theme-vitepress .vp-home-art > span {
+      position: relative;
+      z-index: 2;
+      font-size: clamp(130px, 15vw, 210px);
+      filter: drop-shadow(0 30px 22px rgba(24, 28, 55, 0.16));
+      transform: rotate(-5deg);
+    }
+    #theme-vitepress .vp-home-glow {
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      filter: blur(42px);
+      opacity: 0.72;
+    }
+    #theme-vitepress .vp-home-glow-blue {
+      top: 80px;
+      left: 22px;
+      background: rgba(75, 142, 255, 0.6);
+    }
+    #theme-vitepress .vp-home-glow-purple {
+      right: 12px;
+      bottom: 70px;
+      background: rgba(183, 105, 255, 0.58);
+    }
+
+    #theme-vitepress.vp-essay-mode .vp-header-inner {
+      max-width: none;
+      padding-left: 304px;
+    }
+    #theme-vitepress.vp-essay-mode .vp-header .vp-brand {
+      display: none;
+    }
+    #theme-vitepress.vp-essay-mode .vp-main {
+      padding: 0 0 88px 272px;
+    }
+    #theme-vitepress .vp-essay-page {
+      width: min(1080px, 100%);
+      display: grid;
+      grid-template-columns: minmax(0, 760px) 170px;
+      align-items: start;
+      gap: 72px;
+      margin: 0 auto;
+      padding: 78px 32px 60px;
+    }
+    #theme-vitepress .vp-essay-sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 55;
+      width: 272px;
+      padding: 20px 24px;
+      border-right: 1px solid var(--vp-border);
+      background: var(--vp-surface-soft);
+    }
+    #theme-vitepress .vp-essay-side-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    #theme-vitepress .vp-essay-side-brand span {
+      font-size: 25px;
+    }
+    #theme-vitepress .vp-essay-side-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 60px;
+      font-size: 14px;
+    }
+    #theme-vitepress .vp-essay-side-group strong {
+      margin-bottom: 4px;
+      color: var(--vp-muted);
+      font-size: 13px;
+    }
+    #theme-vitepress .vp-essay-side-group a {
+      padding: 8px 12px;
+      border-radius: 7px;
+      color: var(--vp-primary);
+      background: var(--vp-primary-soft);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    #theme-vitepress .vp-essay-content {
+      min-width: 0;
+    }
+    #theme-vitepress .vp-essay-lead {
+      margin: 0;
+      color: var(--vp-muted);
+      font-size: 16px;
+    }
+    #theme-vitepress .vp-essay-rule {
+      width: 100%;
+      height: 1px;
+      margin: 20px 0 18px;
+      background: var(--vp-border);
+    }
+    #theme-vitepress .vp-essay-content h1 {
+      margin: 0 0 64px;
+      font-family: var(--vp-serif);
+      font-size: clamp(48px, 5.6vw, 72px);
+      font-weight: 700;
+      letter-spacing: -0.045em;
+      line-height: 1.1;
+    }
+    #theme-vitepress .vp-essay-content section {
+      scroll-margin-top: 92px;
+    }
+    #theme-vitepress .vp-essay-content h2 {
+      margin: 60px 0 24px;
+      font-family: var(--vp-serif);
+      font-size: 28px;
+      letter-spacing: -0.02em;
+    }
+    #theme-vitepress .vp-essay-content p:not(.vp-essay-lead) {
+      margin: 0 0 24px;
+      color: color-mix(in srgb, var(--vp-text) 88%, var(--vp-muted));
+      font-size: 17px;
+      line-height: 2;
+      text-align: justify;
+    }
+    #theme-vitepress .vp-essay-toc {
+      position: sticky;
+      top: 104px;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+      padding-left: 18px;
+      border-left: 1px solid var(--vp-border);
+      color: var(--vp-muted);
+      font-size: 13px;
+    }
+    #theme-vitepress .vp-essay-toc strong {
+      margin-bottom: 4px;
+      color: var(--vp-text);
+      font-size: 12px;
+      letter-spacing: 0.14em;
+    }
+    #theme-vitepress .vp-essay-toc a {
+      text-decoration: none;
+    }
+    #theme-vitepress .vp-essay-toc a:hover {
+      color: var(--vp-primary);
+    }
+    #theme-vitepress.vp-essay-mode .vp-footer {
+      max-width: calc(1070px + 272px);
+      padding-left: 300px;
     }
 
     #theme-vitepress .vp-list-panel,
@@ -386,17 +629,17 @@ const Style = () => (
       gap: 9px;
     }
     #theme-vitepress .vp-author img,
-    #theme-vitepress .vp-author > span:first-child {
+    #theme-vitepress .vp-author-avatar {
       width: 36px;
       height: 36px;
       border-radius: 50%;
       object-fit: cover;
     }
-    #theme-vitepress .vp-author > span:first-child {
+    #theme-vitepress .vp-author-avatar {
       display: grid;
       place-items: center;
-      color: white;
-      background: var(--vp-primary);
+      background: #fff1c7;
+      font-size: 21px;
     }
     #theme-vitepress .vp-read-more {
       display: inline-flex;
@@ -794,7 +1037,9 @@ const Style = () => (
 
     #theme-vitepress .vp-footer {
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       gap: 20px;
       max-width: 1070px;
       margin: 0 auto;
@@ -802,6 +1047,11 @@ const Style = () => (
       color: var(--vp-muted);
       font-size: 12px;
       line-height: 1.8;
+      text-align: center;
+    }
+    #theme-vitepress .vp-license {
+      display: flex;
+      flex-direction: column;
     }
     #theme-vitepress .vp-filing {
       display: flex;
@@ -825,6 +1075,34 @@ const Style = () => (
     }
 
     @media (max-width: 900px) {
+      #theme-vitepress .vp-home-hero {
+        grid-template-columns: minmax(0, 1.08fr) minmax(280px, 0.92fr);
+      }
+      #theme-vitepress .vp-home-art {
+        min-height: 390px;
+      }
+      #theme-vitepress.vp-essay-mode .vp-header-inner {
+        padding-left: 32px;
+      }
+      #theme-vitepress.vp-essay-mode .vp-header .vp-brand {
+        display: inline-flex;
+      }
+      #theme-vitepress.vp-essay-mode .vp-main {
+        padding: 48px 28px 80px;
+      }
+      #theme-vitepress .vp-essay-page {
+        grid-template-columns: minmax(0, 720px);
+        justify-content: center;
+        padding: 10px 0 50px;
+      }
+      #theme-vitepress .vp-essay-sidebar,
+      #theme-vitepress .vp-essay-toc {
+        display: none;
+      }
+      #theme-vitepress.vp-essay-mode .vp-footer {
+        max-width: 1070px;
+        padding-left: 28px;
+      }
       #theme-vitepress .vp-search-trigger {
         min-width: 42px;
         width: 42px;
@@ -888,6 +1166,50 @@ const Style = () => (
       #theme-vitepress .vp-main {
         padding: 28px 12px 54px;
       }
+      #theme-vitepress .vp-home-hero {
+        min-height: auto;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 38px 8px 20px;
+      }
+      #theme-vitepress .vp-home-copy h1 {
+        font-size: 46px;
+      }
+      #theme-vitepress .vp-home-copy p {
+        margin-top: 20px;
+        font-size: 17px;
+      }
+      #theme-vitepress .vp-home-art {
+        min-height: 300px;
+      }
+      #theme-vitepress .vp-home-glow {
+        width: 190px;
+        height: 190px;
+      }
+      #theme-vitepress.vp-essay-mode .vp-header-inner {
+        padding-left: 16px;
+      }
+      #theme-vitepress.vp-essay-mode .vp-main {
+        padding: 36px 18px 60px;
+      }
+      #theme-vitepress .vp-essay-page {
+        padding-bottom: 20px;
+      }
+      #theme-vitepress .vp-essay-content h1 {
+        margin-bottom: 50px;
+        font-size: 42px;
+      }
+      #theme-vitepress .vp-essay-content h2 {
+        margin-top: 48px;
+        font-size: 25px;
+      }
+      #theme-vitepress .vp-essay-content p:not(.vp-essay-lead) {
+        font-size: 16px;
+        line-height: 1.9;
+      }
+      #theme-vitepress.vp-essay-mode .vp-footer {
+        padding-left: 28px;
+      }
       #theme-vitepress .vp-list-panel,
       #theme-vitepress .vp-generic-panel {
         padding: 44px 16px 30px;
@@ -915,7 +1237,7 @@ const Style = () => (
         font-size: 13px;
       }
       #theme-vitepress .vp-author img,
-      #theme-vitepress .vp-author > span:first-child {
+      #theme-vitepress .vp-author-avatar {
         width: 30px;
         height: 30px;
       }

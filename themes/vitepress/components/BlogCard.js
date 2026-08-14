@@ -2,7 +2,7 @@ import SmartLink from '@/components/SmartLink'
 import { siteConfig } from '@/lib/config'
 import CONFIG from '../config'
 
-const BlogCard = ({ post, siteInfo }) => {
+const BlogCard = ({ post }) => {
   const category = post?.category || post?.type || 'Article'
   const date = post?.date?.start_date || post?.publishDay || post?.createdTime
 
@@ -29,13 +29,8 @@ const BlogCard = ({ post, siteInfo }) => {
 
       <footer className='vp-post-card-footer'>
         <div className='vp-author'>
-          {siteInfo?.icon ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={siteInfo.icon} alt='' />
-          ) : (
-            <span>{String(siteConfig('AUTHOR') || 'N').slice(0, 1)}</span>
-          )}
-          <span>{siteConfig('AUTHOR')}</span>
+          <span className='vp-author-avatar'>😼</span>
+          <span>{siteConfig('VITEPRESS_AUTHOR', null, CONFIG)}</span>
         </div>
         <SmartLink href={post?.href} className='vp-read-more'>
           Continue reading <i className='fas fa-arrow-right' />

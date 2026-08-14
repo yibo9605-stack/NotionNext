@@ -1,19 +1,25 @@
 import { BeiAnGongAn } from '@/components/BeiAnGongAn'
 import BeiAnSite from '@/components/BeiAnSite'
-import CopyRightDate from '@/components/CopyRightDate'
-import PoweredBy from '@/components/PoweredBy'
+import { siteConfig } from '@/lib/config'
+import CONFIG from '../config'
 
-const Footer = () => (
-  <footer className='vp-footer'>
-    <div>
-      <CopyRightDate />
-      <PoweredBy />
-    </div>
-    <div className='vp-filing'>
-      <BeiAnSite />
-      <BeiAnGongAn />
-    </div>
-  </footer>
-)
+const Footer = () => {
+  const year = new Date().getFullYear()
+  return (
+    <footer className='vp-footer'>
+      <div className='vp-license'>
+        <span>Released under the MIT License.</span>
+        <span>
+          Copyright © 2023-{year}{' '}
+          {siteConfig('VITEPRESS_AUTHOR', null, CONFIG)}
+        </span>
+      </div>
+      <div className='vp-filing'>
+        <BeiAnSite />
+        <BeiAnGongAn />
+      </div>
+    </footer>
+  )
+}
 
 export default Footer

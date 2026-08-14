@@ -4,34 +4,27 @@ import { useGlobal } from '@/lib/global'
 import { useRouter } from 'next/router'
 import CONFIG from '../config'
 
-const fallbackLinks = locale => [
-  { name: locale?.NAV?.HOME || '首页', href: '/' },
+const navigationLinks = [
+  { name: 'Home', href: '/' },
   {
-    name: locale?.COMMON?.CATEGORY || '分类',
-    href: '/category',
-    show: siteConfig('VITEPRESS_MENU_CATEGORY', true, CONFIG)
+    name: '随笔',
+    href: siteConfig('VITEPRESS_ESSAY_PATH', null, CONFIG)
   },
   {
-    name: locale?.COMMON?.TAGS || '标签',
-    href: '/tag',
-    show: siteConfig('VITEPRESS_MENU_TAG', true, CONFIG)
-  },
-  {
-    name: locale?.NAV?.ARCHIVE || '归档',
-    href: '/archive',
-    show: siteConfig('VITEPRESS_MENU_ARCHIVE', true, CONFIG)
+    name: '博客',
+    href: '/blog',
+    subMenus: [
+      { title: '博客首页', href: '/blog' },
+      { title: '标签', href: '/tag' },
+      { title: '档案', href: '/archive' }
+    ]
   }
 ]
 
-export const Header = props => {
-  const { customMenu, siteInfo } = props
+export const Header = () => {
   const { isDarkMode, toggleDarkMode, locale } = useGlobal()
   const router = useRouter()
-  const links =
-    siteConfig('CUSTOM_MENU') && customMenu?.length
-      ? customMenu
-      : fallbackLinks(locale)
-  const github = siteConfig('CONTACT_GITHUB')
+  const github = siteConfig('VITEPRESS_GITHUB', null, CONFIG)
 
   const openSearch = () => {
     router.push('/search')
@@ -41,13 +34,10 @@ export const Header = props => {
     <header className='vp-header'>
       <div className='vp-header-inner'>
         <SmartLink href='/' className='vp-brand'>
-          {siteInfo?.icon ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={siteInfo.icon} alt='' className='vp-brand-icon' />
-          ) : (
-            <span className='vp-brand-fallback'>N</span>
-          )}
-          <span>{siteConfig('TITLE')}</span>
+          <span className='vp-brand-emoji' aria-hidden='true'>
+            😼
+          </span>
+          <span>{siteConfig('VITEPRESS_SITE_NAME', null, CONFIG)}</span>
         </SmartLink>
 
         {siteConfig('VITEPRESS_MENU_SEARCH', true, CONFIG) && (
@@ -63,31 +53,38 @@ export const Header = props => {
         )}
 
         <nav className='vp-nav' aria-label='Main navigation'>
-          {links
-            ?.filter(link => link?.show !== false)
-            .map((link, index) => (
-              <div className='vp-nav-item' key={link.id || link.href || index}>
-                <SmartLink href={link.href || '#'} target={link.target}>
-                  {link.name || link.title}
-                  {link.subMenus?.length ? (
-                    <i className='fas fa-chevron-down vp-nav-chevron' />
-                  ) : null}
-                </SmartLink>
+          {navigationLinks.map((link, index) => (
+            <div className='vp-nav-item' key={link.id || link.href || index}>
+              <SmartLink
+                href={link.href || '#'}
+                target={link.target}
+                className={
+                  router.asPath === link.href ||
+                  (link.href !== '/' && router.asPath.startsWith(link.href))
+                    ? 'vp-nav-active'
+                    : ''
+                }
+              >
+                {link.name || link.title}
                 {link.subMenus?.length ? (
-                  <div className='vp-submenu'>
-                    {link.subMenus.map((subLink, subIndex) => (
-                      <SmartLink
-                        key={subLink.id || subLink.href || subIndex}
-                        href={subLink.href || '#'}
-                        target={subLink.target}
-                      >
-                        {subLink.title || subLink.name}
-                      </SmartLink>
-                    ))}
-                  </div>
+                  <i className='fas fa-chevron-down vp-nav-chevron' />
                 ) : null}
-              </div>
-            ))}
+              </SmartLink>
+              {link.subMenus?.length ? (
+                <div className='vp-submenu'>
+                  {link.subMenus.map((subLink, subIndex) => (
+                    <SmartLink
+                      key={subLink.id || subLink.href || subIndex}
+                      href={subLink.href || '#'}
+                      target={subLink.target}
+                    >
+                      {subLink.title || subLink.name}
+                    </SmartLink>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          ))}
         </nav>
 
         <div className='vp-header-actions'>
