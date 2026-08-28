@@ -2,19 +2,36 @@ import BLOG from '@/blog.config'
 import { siteConfig } from '@/lib/config'
 import { cleanPostSummaries, fetchGlobalAllData } from '@/lib/db/SiteDataApi'
 import { DynamicLayout } from '@/themes/theme'
+import CONFIG from '@/themes/vitepress/config'
+import { isEssayPost } from '@/themes/vitepress/lib/posts'
 
 const BlogPage = props => {
   const theme = siteConfig('THEME', BLOG.THEME, props.NOTION_CONFIG)
   return <DynamicLayout theme={theme} layoutName='LayoutPostList' {...props} />
 }
 
+const getBlogPosts = (allPages, essayCategory) =>
+  (allPages || []).filter(
+    page =>
+      page.type === 'Post' &&
+      page.status === 'Published' &&
+      !isEssayPost(page, essayCategory)
+  )
+
 export async function getStaticPaths({ locale }) {
-  const { postCount, NOTION_CONFIG } = await fetchGlobalAllData({
+  const { allPages, NOTION_CONFIG } = await fetchGlobalAllData({
     from: 'blog-page-paths',
     locale
   })
+  const essayCategory = siteConfig(
+    'VITEPRESS_ESSAY_CATEGORY',
+    '心情随笔',
+    CONFIG
+  )
   const postsPerPage = siteConfig('POSTS_PER_PAGE', 12, NOTION_CONFIG)
-  const totalPages = Math.ceil(postCount / postsPerPage)
+  const totalPages = Math.ceil(
+    getBlogPosts(allPages, essayCategory).length / postsPerPage
+  )
 
   return {
     paths: Array.from({ length: Math.max(0, totalPages - 1) }, (_, index) => ({
@@ -29,9 +46,12 @@ export async function getStaticProps({ params: { page }, locale }) {
     from: `blog-page-${page}`,
     locale
   })
-  const allPosts = props.allPages?.filter(
-    item => item.type === 'Post' && item.status === 'Published'
+  const essayCategory = siteConfig(
+    'VITEPRESS_ESSAY_CATEGORY',
+    '心情随笔',
+    CONFIG
   )
+  const allPosts = getBlogPosts(props.allPages, essayCategory)
   const postsPerPage = siteConfig(
     'POSTS_PER_PAGE',
     12,
@@ -40,11 +60,12 @@ export async function getStaticProps({ params: { page }, locale }) {
   const currentPage = Number(page)
 
   props.posts = cleanPostSummaries(
-    allPosts?.slice(
+    allPosts.slice(
       postsPerPage * (currentPage - 1),
       postsPerPage * currentPage
     )
   )
+  props.postCount = allPosts.length
   props.page = currentPage
   delete props.allPages
 

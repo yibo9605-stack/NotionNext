@@ -21,7 +21,16 @@ const SEO = props => {
   let url = PATH?.length ? createSiteUrl(LINK, SUB_PATH) || LINK : LINK
   let image
   const router = useRouter()
-  const meta = getSEOMeta(props, router, useGlobal()?.locale)
+  const configuredSiteTitle = siteConfig(
+    'VITEPRESS_SITE_NAME',
+    siteInfo?.title || siteConfig('TITLE')
+  )
+  const seoSiteInfo = { ...siteInfo, title: configuredSiteTitle }
+  const meta = getSEOMeta(
+    { ...props, siteInfo: seoSiteInfo },
+    router,
+    useGlobal()?.locale
+  )
   const webFontUrl = siteConfig('FONT_URL')
   const hasWebFontUrl = Array.isArray(webFontUrl)
     ? webFontUrl.filter(Boolean).length > 0
@@ -62,7 +71,7 @@ const SEO = props => {
     url = createSiteUrl(url, meta.slug) || url
     image = getAbsoluteImageUrl(meta.image || '/bg_image.jpg', LINK)
   }
-  const TITLE = siteConfig('TITLE')
+  const TITLE = configuredSiteTitle
   const title = meta?.title || TITLE
   const description = meta?.description || `${siteInfo?.description}`
   const type = meta?.type === 'Post' ? 'article' : meta?.type || 'website'
@@ -72,7 +81,10 @@ const SEO = props => {
   const category = Array.isArray(meta?.category)
     ? meta?.category?.[0]
     : meta?.category || KEYWORDS // section 主要是像是 category 這樣的分類，Facebook 用這個來抓連結的分類
-  const favicon = siteConfig('BLOG_FAVICON')
+  const favicon = siteConfig(
+    'VITEPRESS_FAVICON',
+    siteConfig('BLOG_FAVICON')
+  )
   const BACKGROUND_DARK = siteConfig('BACKGROUND_DARK', '', NOTION_CONFIG)
 
   const SEO_BAIDU_SITE_VERIFICATION = siteConfig(
@@ -87,7 +99,7 @@ const SEO = props => {
     NOTION_CONFIG
   )
 
-  const BLOG_FAVICON = siteConfig('BLOG_FAVICON', null, NOTION_CONFIG)
+  const BLOG_FAVICON = favicon
 
   const COMMENT_WEBMENTION_ENABLE = siteConfig(
     'COMMENT_WEBMENTION_ENABLE',
@@ -167,7 +179,7 @@ const SEO = props => {
       <meta property='og:image:width' content='1200' />
       <meta property='og:image:height' content='630' />
       <meta property='og:image:alt' content={title} />
-      <meta property='og:site_name' content={siteConfig('TITLE')} />
+      <meta property='og:site_name' content={TITLE} />
       <meta property='og:type' content={type} />
 
       {/* Twitter Card 元数据 */}
@@ -228,7 +240,7 @@ const SEO = props => {
         type='application/ld+json'
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(
-            generateStructuredData(meta, siteInfo, url, image, AUTHOR, LINK)
+            generateStructuredData(meta, seoSiteInfo, url, image, AUTHOR, LINK)
           )
         }}
       />
@@ -356,10 +368,34 @@ const getSEOMeta = (props, router, locale) => {
   switch (router.route) {
     case '/':
       return {
-        title: `${siteInfo?.title} | ${siteInfo?.description}`,
+        title: siteInfo?.title,
         description: `${siteInfo?.description}`,
         image: `${siteInfo?.pageCover}`,
         slug: '',
+        type: 'website'
+      }
+    case '/blog':
+      return {
+        title: '博客 | ' + siteInfo?.title,
+        description: `${siteInfo?.description}`,
+        image: `${siteInfo?.pageCover}`,
+        slug: 'blog',
+        type: 'website'
+      }
+    case '/blog/page/[page]':
+      return {
+        title: '博客第' + page + '页 | ' + siteInfo?.title,
+        description: `${siteInfo?.description}`,
+        image: `${siteInfo?.pageCover}`,
+        slug: 'blog/page/' + page,
+        type: 'website'
+      }
+    case '/casualEssay/RollingStoneLoveStory':
+      return {
+        title: '随笔 | ' + siteInfo?.title,
+        description: '记录生活、心情与沿途的思考。',
+        image: `${siteInfo?.pageCover}`,
+        slug: 'casualEssay/RollingStoneLoveStory',
         type: 'website'
       }
     case '/archive':

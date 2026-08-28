@@ -8,17 +8,23 @@ const CONFIG = {
   VITEPRESS_MENU_SEARCH: true,
 
   VITEPRESS_SITE_NAME:
-    process.env.NEXT_PUBLIC_VITEPRESS_SITE_NAME || "Yibo's Blog",
-  VITEPRESS_AUTHOR: process.env.NEXT_PUBLIC_VITEPRESS_AUTHOR || 'Yibo',
+    process.env.NEXT_PUBLIC_VITEPRESS_SITE_NAME || 'yibo',
+  VITEPRESS_AUTHOR: process.env.NEXT_PUBLIC_VITEPRESS_AUTHOR || 'yibo',
+  VITEPRESS_FAVICON:
+    process.env.NEXT_PUBLIC_VITEPRESS_FAVICON || '/yibo-favicon.svg',
   VITEPRESS_GITHUB:
     process.env.NEXT_PUBLIC_VITEPRESS_GITHUB ||
     'https://github.com/yibo9605-stack',
   VITEPRESS_ESSAY_PATH:
     process.env.NEXT_PUBLIC_VITEPRESS_ESSAY_PATH ||
     '/casualEssay/RollingStoneLoveStory',
+  VITEPRESS_ESSAY_CATEGORY:
+    process.env.NEXT_PUBLIC_VITEPRESS_ESSAY_CATEGORY || '心情随笔',
+  VITEPRESS_ESSAY_TITLE: '随笔',
+  VITEPRESS_ESSAY_DESCRIPTION: '记录生活、心情与沿途的思考。',
 
   VITEPRESS_HERO_BRAND:
-    process.env.NEXT_PUBLIC_VITEPRESS_HERO_BRAND || "Yibo's Blog",
+    process.env.NEXT_PUBLIC_VITEPRESS_HERO_BRAND || 'yibo',
   VITEPRESS_HERO_TITLE:
     process.env.NEXT_PUBLIC_VITEPRESS_HERO_TITLE || '向内生长，向外探索',
   VITEPRESS_HERO_DESCRIPTION:
