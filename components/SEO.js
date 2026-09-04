@@ -398,6 +398,24 @@ const getSEOMeta = (props, router, locale) => {
         slug: 'casualEssay/RollingStoneLoveStory',
         type: 'website'
       }
+    case '/casualEssay/[...slug]':
+      return {
+        title: post
+          ? `${post.title} | ${siteInfo?.title}`
+          : `随笔 | ${siteInfo?.title}`,
+        description: post?.summary || '记录生活、心情与沿途的思考。',
+        image: post?.pageCoverThumbnail || `${siteInfo?.pageCover}`,
+        slug: `casualEssay/${String(post?.slug || '').replace(/^\/+/, '')}`,
+        type: post?.type,
+        category: post?.category,
+        tags: post?.tags,
+        publishDay: post?.publishDay,
+        lastEditedDay: post?.lastEditedDay,
+        publishTime:
+          getIsoTime(post?.publishDate) ||
+          getIsoTime(post?.date?.start_date),
+        modifiedTime: getIsoTime(post?.lastEditedTime || post?.lastEditedDate)
+      }
     case '/archive':
       return {
         title: `${locale.NAV.ARCHIVE} | ${siteInfo?.title}`,

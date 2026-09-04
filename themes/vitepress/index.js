@@ -35,10 +35,12 @@ const PageHeading = ({ eyebrow, title, description }) => (
 
 const LayoutBase = props => {
   const { children } = props
+  const router = useRouter()
+  const essayMode = router.pathname.startsWith('/casualEssay/')
   return (
     <div
       id='theme-vitepress'
-      className={`${siteConfig('FONT_STYLE')} min-h-screen`}
+      className={`${siteConfig('FONT_STYLE')} min-h-screen ${essayMode ? 'vp-essay-mode' : ''}`}
     >
       <Style />
       <Header {...props} />
@@ -129,27 +131,93 @@ const LayoutPostList = props => {
   )
 }
 
-const LayoutEssay = ({ posts = [] }) => (
-  <section className='vp-list-panel'>
-    <PageHeading
-      eyebrow='ESSAYS'
-      title={siteConfig('VITEPRESS_ESSAY_TITLE', '随笔', CONFIG)}
-      description={siteConfig(
-        'VITEPRESS_ESSAY_DESCRIPTION',
-        '记录生活、心情与沿途的思考。',
-        CONFIG
-      )}
-    />
-    <div id='essay-posts-wrapper' className='vp-post-grid'>
-      {posts.map(post => (
-        <BlogCard key={post.id} post={post} />
-      ))}
-    </div>
-    {!posts.length ? (
-      <div className='vp-empty'>暂无“心情随笔”文章</div>
-    ) : null}
-  </section>
-)
+const LayoutEssay = ({ posts = [], post }) => {
+  const router = useRouter()
+  const getEssayHref = item =>
+    `/casualEssay/${String(item?.slug || item?.id || '').replace(/^\/+/, '')}`
+  const selectedHref = post ? getEssayHref(post) : ''
+
+  const handleEssayChange = event => {
+    const href = event.target.value
+    if (href) router.push(href)
+  }
+
+  return (
+    <article className='vp-essay-page'>
+      <aside className='vp-essay-sidebar'>
+        <SmartLink href='/' className='vp-essay-side-brand'>
+          <span aria-hidden='true'>😼</span>
+          {siteConfig('VITEPRESS_SITE_NAME', null, CONFIG)}
+        </SmartLink>
+        <section className='vp-essay-side-group'>
+          <strong>心情随笔</strong>
+          <nav className='vp-essay-side-nav' aria-label='随笔文章'>
+            {posts.map(item => {
+              const href = getEssayHref(item)
+              return (
+                <SmartLink
+                  key={item.id}
+                  href={href}
+                  className={`vp-essay-side-link ${
+                    item.id === post?.id ? 'is-active' : ''
+                  }`}
+                >
+                  {item.title}
+                </SmartLink>
+              )
+            })}
+          </nav>
+        </section>
+      </aside>
+
+      <div className='vp-essay-content'>
+        {posts.length ? (
+          <label className='vp-essay-mobile-picker'>
+            <span>选择随笔</span>
+            <select value={selectedHref} onChange={handleEssayChange}>
+              {posts.map(item => (
+                <option key={item.id} value={getEssayHref(item)}>
+                  {item.title}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : null}
+
+        {post ? (
+          <>
+            <p className='vp-essay-lead'>
+              {post.summary || '记录生活、心情与沿途的思考。'}
+            </p>
+            <div className='vp-essay-rule' />
+            <h1 className='vp-essay-title'>{post.title}</h1>
+            <div className='vp-essay-meta'>
+              <time>
+                {post.date?.start_date ||
+                  post.publishDay ||
+                  post.createdTime}
+              </time>
+            </div>
+            <div id='article-wrapper' className='vp-prose vp-essay-prose'>
+              <NotionPage post={post} />
+            </div>
+          </>
+        ) : (
+          <div className='vp-essay-empty'>暂无“心情随笔”文章</div>
+        )}
+      </div>
+
+      <aside className='vp-essay-toc'>
+        <strong>目录</strong>
+        {post?.toc?.length ? (
+          <Catalog toc={post.toc} />
+        ) : (
+          <span>本文暂无目录</span>
+        )}
+      </aside>
+    </article>
+  )
+}
 
 const LayoutSlug = props => {
   const { post, lock, validPassword, prev, next } = props

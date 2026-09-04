@@ -1,18 +1,30 @@
 import BLOG from '@/blog.config'
 import { siteConfig } from '@/lib/config'
-import { cleanPostSummaries, fetchGlobalAllData } from '@/lib/db/SiteDataApi'
+import {
+  cleanPostSummaries,
+  fetchGlobalAllData,
+  resolvePostProps
+} from '@/lib/db/SiteDataApi'
 import { DynamicLayout } from '@/themes/theme'
 import CONFIG from '@/themes/vitepress/config'
-import { isEssayPost } from '@/themes/vitepress/lib/posts'
+import { getEssayPosts } from '@/themes/vitepress/lib/posts'
 
 const RollingStoneLoveStory = props => {
   const theme = siteConfig('THEME', BLOG.THEME, props.NOTION_CONFIG)
   return <DynamicLayout theme={theme} layoutName='LayoutEssay' {...props} />
 }
 
+const prepareEssayProps = (props, essayCategory) => {
+  const essayPosts = getEssayPosts(props.allPages, essayCategory)
+  props.posts = cleanPostSummaries(essayPosts)
+  props.postCount = props.posts.length
+  delete props.allPages
+  return props
+}
+
 export async function getStaticProps({ locale }) {
-  const props = await fetchGlobalAllData({
-    from: 'casual-essay',
+  const initialProps = await fetchGlobalAllData({
+    from: 'casual-essay-index',
     locale
   })
   const essayCategory = siteConfig(
@@ -20,12 +32,19 @@ export async function getStaticProps({ locale }) {
     '心情随笔',
     CONFIG
   )
-  const essayPosts = props.allPages?.filter(
-    page => page.status === 'Published' && isEssayPost(page, essayCategory)
-  )
-  props.posts = cleanPostSummaries(essayPosts || [])
-  props.postCount = props.posts.length
-  delete props.allPages
+  const essayPosts = getEssayPosts(initialProps.allPages, essayCategory)
+  let props = initialProps
+
+  if (essayPosts.length > 0) {
+    props = await resolvePostProps({
+      prefix: essayPosts[0].slug,
+      locale,
+      from: 'casual-essay-first-post',
+      keepAllPages: true
+    })
+  }
+
+  prepareEssayProps(props, essayCategory)
 
   return {
     props,
