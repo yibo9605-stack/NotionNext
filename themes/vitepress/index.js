@@ -18,6 +18,7 @@ import { Header } from './components/Header'
 import Pagination from './components/Pagination'
 import SearchInput from './components/SearchInput'
 import CONFIG from './config'
+import { getEssayPostTags } from './lib/posts'
 import { Style } from './style'
 
 const PageHeading = ({ eyebrow, title, description }) => (
@@ -133,13 +134,52 @@ const LayoutPostList = props => {
 
 const LayoutEssay = ({ posts = [], post }) => {
   const router = useRouter()
-  const getEssayHref = item =>
-    `/casualEssay/${String(item?.slug || item?.id || '').replace(/^\/+/, '')}`
+  const essayCategory = siteConfig(
+    'VITEPRESS_ESSAY_CATEGORY',
+    '心情随笔',
+    CONFIG
+  )
+  const tags = [
+    ...new Set(
+      posts.flatMap(getEssayPostTags).filter(tag => tag !== essayCategory)
+    )
+  ].sort((a, b) => a.localeCompare(b, 'zh-CN'))
+  const requestedTag =
+    typeof router.query.tag === 'string' ? router.query.tag : ''
+  const activeTag = tags.includes(requestedTag) ? requestedTag : ''
+  const visiblePosts = activeTag
+    ? posts.filter(item => getEssayPostTags(item).includes(activeTag))
+    : posts
+
+  const getEssayHref = (item, tag = activeTag) =>
+    `/casualEssay/${String(item?.slug || item?.id || '').replace(/^\/+/, '')}${
+      tag ? `?tag=${encodeURIComponent(tag)}` : ''
+    }`
   const selectedHref = post ? getEssayHref(post) : ''
 
   const handleEssayChange = event => {
     const href = event.target.value
     if (href) router.push(href)
+  }
+
+  const handleTagChange = tag => {
+    const nextPosts = tag
+      ? posts.filter(item => getEssayPostTags(item).includes(tag))
+      : posts
+    const currentPostIsVisible = nextPosts.some(item => item.id === post?.id)
+
+    if (nextPosts.length && !currentPostIsVisible) {
+      router.push(getEssayHref(nextPosts[0], tag))
+      return
+    }
+
+    const query = { ...router.query }
+    delete query.tag
+    if (tag) query.tag = tag
+    router.replace({ pathname: router.pathname, query }, undefined, {
+      shallow: true,
+      scroll: false
+    })
   }
 
   return (
@@ -150,14 +190,37 @@ const LayoutEssay = ({ posts = [], post }) => {
           {siteConfig('VITEPRESS_SITE_NAME', null, CONFIG)}
         </SmartLink>
         <section className='vp-essay-side-group'>
-          <strong>心情随笔</strong>
+          <div className='vp-essay-side-heading'>
+            <strong>文章</strong>
+            <span>{visiblePosts.length}</span>
+          </div>
+          <div className='vp-essay-tag-filter' aria-label='按标签筛选'>
+            <button
+              type='button'
+              className={!activeTag ? 'is-active' : ''}
+              onClick={() => handleTagChange('')}
+            >
+              全部
+            </button>
+            {tags.map(tag => (
+              <button
+                key={tag}
+                type='button'
+                className={activeTag === tag ? 'is-active' : ''}
+                onClick={() => handleTagChange(tag)}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
           <nav className='vp-essay-side-nav' aria-label='随笔文章'>
-            {posts.map(item => {
+            {visiblePosts.map(item => {
               const href = getEssayHref(item)
               return (
                 <SmartLink
                   key={item.id}
                   href={href}
+                  title={item.title}
                   className={`vp-essay-side-link ${
                     item.id === post?.id ? 'is-active' : ''
                   }`}
@@ -166,22 +229,41 @@ const LayoutEssay = ({ posts = [], post }) => {
                 </SmartLink>
               )
             })}
+            {!visiblePosts.length ? (
+              <span className='vp-essay-side-empty'>该标签下暂无文章</span>
+            ) : null}
           </nav>
         </section>
       </aside>
 
       <div className='vp-essay-content'>
         {posts.length ? (
-          <label className='vp-essay-mobile-picker'>
-            <span>选择随笔</span>
-            <select value={selectedHref} onChange={handleEssayChange}>
-              {posts.map(item => (
-                <option key={item.id} value={getEssayHref(item)}>
-                  {item.title}
-                </option>
-              ))}
-            </select>
-          </label>
+          <div className='vp-essay-mobile-picker'>
+            <label>
+              <span>按标签筛选</span>
+              <select
+                value={activeTag}
+                onChange={event => handleTagChange(event.target.value)}
+              >
+                <option value=''>全部标签</option>
+                {tags.map(tag => (
+                  <option key={tag} value={tag}>
+                    {tag}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              <span>选择随笔</span>
+              <select value={selectedHref} onChange={handleEssayChange}>
+                {visiblePosts.map(item => (
+                  <option key={item.id} value={getEssayHref(item)}>
+                    {item.title}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
         ) : null}
 
         {post ? (
