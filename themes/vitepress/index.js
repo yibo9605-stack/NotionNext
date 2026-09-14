@@ -230,7 +230,11 @@ const LayoutEssay = ({ posts = [], post }) => {
               )
             })}
             {!visiblePosts.length ? (
-              <span className='vp-essay-side-empty'>该标签下暂无文章</span>
+              <span className='vp-essay-side-empty'>
+                {posts.length
+                  ? '该标签下暂无文章'
+                  : '暂无已发布的随笔文章'}
+              </span>
             ) : null}
           </nav>
         </section>
